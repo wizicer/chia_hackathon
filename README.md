@@ -37,6 +37,8 @@ In this example
 4. As `C` withdraw the last amount, no extra `SP4` created, game finished.
 5. A leadboard can be displayed using this series of transactions on-chain `solution`.
 
+**Refer to [code](popchia.clsp) for implementation details.**
+
 After curried, solution like this: `(popchia_genesis popchia_puzhash password consumer_puzhash popchia_amount consumer_amount coin_id)`
 
 - `popchia_genesis`: genesis id of popchia which would be used to determine if it is a valid popchia

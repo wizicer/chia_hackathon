@@ -21,36 +21,36 @@ This game is inspired by the traditional Chinese New Year game: grab 🧧red env
 
 ![](pic1.png)
 
-Every 🍿 Popchia coin is created from a standard coin, everytime a new **SP**ecial coin is created as well as a standard "**T**ake-**A**way" coin until the last time. SP coin is available to next round of "Pop", TA coin is send to participant's wallet.
+Every 🍿 Popchia coin is created from a standard coin, everytime a new **SP**ecial coin is created as well as a standard "**T**ake-**A**way" coin until the last time. `SP` coin is available to next round of "Pop", `TA` coin is send to participant's wallet.
 
-After first created, SP would check:
+After first created, `SP` would check:
 
-1. Next address is also a SP coin.
-2. TA coin amount is "randomized" according to coin id of current coin.
-3. If according to coin id, remaining amount is insufficient, TA can take all and finish this "pop".
+1. Next address is also a `SP` coin.
+2. `TA` coin amount is "randomized" according to coin id of current coin.
+3. If according to coin id, remaining amount is insufficient, `TA` can take all and finish this "pop".
 
 In this example
 
-1. 🍿 Popchia created from a standard coin of 100 mojos, namely SP1. 
-2. A participated the game and try to get coin, a new SP2 created, and his standard coin was sent to his wallet.
-3. Repeatly, B and C get their own coins.
-4. As C withdraw the last amount, no extra SP4 created, game finished.
+1. 🍿 Popchia created from a standard coin of 100 mojos, namely `SP1`. 
+2. `A` participated the game and try to get coin, a new `SP2` created, and his standard coin was sent to his wallet.
+3. Repeatly, `B` and `C` get their own coins.
+4. As `C` withdraw the last amount, no extra `SP4` created, game finished.
 5. A leadboard can be displayed using this series of transactions on-chain `solution`.
 
 After curried, solution like this: `(popchia_genesis popchia_puzhash password consumer_puzhash popchia_amount consumer_amount coin_id)`
 
-- popchia_genesis: genesis id of popchia which would be used to determine if it is a valid popchia
-- popchia_puzhash: next popchia puzzle hash, which should be a valid popchia puzzle
-- password: password to ensure the legality of participants
-- consumer_puzhash: puzzle hash for who want to partipate and withdraw the popchia as a standard coin
-- consumer_amount: amount to withdraw, generated according to coin_id which would be checked
-- popchia_amount: remaining amount would go to next popchia puzzle
-- coin_id: current coin id, act as a oracle to provide randomness
+- `popchia_genesis`: genesis id of popchia which would be used to determine if it is a valid popchia
+- `popchia_puzhash`: next popchia puzzle hash, which should be a valid popchia puzzle
+- `password`: password to ensure the legality of participants
+- `consumer_puzhash`: puzzle hash for who want to partipate and withdraw the popchia as a standard coin
+- `consumer_amount`: amount to withdraw, generated according to coin_id which would be checked
+- `popchia_amount`: remaining amount would go to next popchia puzzle
+- `coin_id`: current coin id, act as a oracle to provide randomness
 
 Highlights in chialisp:
 
-- To get on-chain data like coin_id or height, pass it in through the solution and then assert that it is true using ASSERT_MY_ID and ASSERT_BLOCK_HEIGHT.
-- To figure out the puzzle_hash is some type of puzzle but with curried argument, just re-curry the inner puzzle with a given outer layer and then compare the result against the puzzle_hash.
+- To get on-chain data like coin_id or height, pass it in through the solution and then assert that it is true using `ASSERT_MY_ID` and `ASSERT_BLOCK_HEIGHT`.
+- To figure out the `puzzle_hash` is some type of puzzle but with curried argument, just re-curry the inner puzzle with a given outer layer and then compare the result against the `puzzle_hash`.
 - TO get `or` operator, find `rl.clvm`, there is a implementation.
 
 ## How to work

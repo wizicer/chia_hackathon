@@ -58,17 +58,17 @@ print(f'alice smart coin:\t{alice_coin}')
 # popchia_amount
 # consumer_amount
 # coin_id
-amount = alice_coin.id & 0x00000000000000000000000000000000000000000000000000000000000000ff
+amount = alice_coin.parent_coin_info & 0x00000000000000000000000000000000000000000000000000000000000000ff
 solution = Program.to([
     1, # (mod conditions conditions)
     [
         alice_coin.puzzle_hash(),
-        "new puzhash",
+        alice_coin.create_standard_spend(),
         password,
         bob.puzzle_hash(),
         0,
         amount,
-        alice_coin.id,
+        alice_coin.parent_coin_info,
     ]
 ])
 
@@ -79,7 +79,6 @@ spend = CoinSpend(
     solution 
 )
 
-# message: bytes = std_hash(bytes("hello delegated puzzle", "utf-8"))
 message: bytes = Program.to(1).get_tree_hash() # (mod conditions conditions)
 alice_sk: PrivateKey = alice.pk_to_sk(alice.pk())
 sig: G2Element = AugSchemeMPL.sign(
@@ -107,4 +106,3 @@ print(coin_spend.puzzle_reveal)
 
 asyncio.run(network.close())
 
-# utils.print_json(spend_bundle.to_json_dict(include_legacy_keys = False, exclude_modern_keys = False))

@@ -47,6 +47,12 @@ After curried, solution like this: `(popchia_genesis popchia_puzhash password co
 - popchia_amount: remaining amount would go to next popchia puzzle
 - coin_id: current coin id, act as a oracle to provide randomness
 
+Highlights in chialisp:
+
+- To get on-chain data like coin_id or height, pass it in through the solution and then assert that it is true using ASSERT_MY_ID and ASSERT_BLOCK_HEIGHT.
+- To figure out the puzzle_hash is some type of puzzle but with curried argument, just re-curry the inner puzzle with a given outer layer and then compare the result against the puzzle_hash.
+- TO get `or` operator, find `rl.clvm`, there is a implementation.
+
 ## How to work
 
 ```

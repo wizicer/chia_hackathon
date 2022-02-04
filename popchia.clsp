@@ -1,0 +1,79 @@
+(mod (
+    RESERVED_PASSWORD
+    popchia_genesis
+    popchia_puzhash
+    password
+    consumer_puzhash
+    popchia_amount
+    consumer_amount
+    coin_id
+    )
+
+    (include curry.clvm)
+    (include sha256tree.clvm)
+    (include condition_codes.clvm)
+    
+    ; "assert" is a macro that wraps repeated instances of "if"
+    ; usage: (assert A0 A1 ... An R)
+    ; all of A0, A1, ... An must evaluate to non-null, or an exception is raised
+    ; return the value of R (if we get that far)
+
+    (defmacro assert items
+        (if (r items)
+            (list if (f items) (c assert (r items)) (q . (x)))
+            (f items)
+        )
+    )
+
+    (defun assert_popchia (
+        RESERVED_PASSWORD
+        popchia_genesis
+        popchia_puzhash
+        password
+        consumer_puzhash
+        popchia_amount
+        consumer_amount
+        coin_id
+    )
+        (if (= (sha256 password) RESERVED_PASSWORD)
+            (list 
+                (list CREATE_COIN consumer_puzhash consumer_amount)
+                (list CREATE_COIN popchia_puzhash popchia_amount)
+                (list ASSERT_MY_COIN_ID coin_id)
+            )
+            (x)
+        )
+    )
+
+    (defmacro or args
+        (if args
+            (qq (if (unquote (f args))
+                    1
+                    (unquote (c or (r args)))))
+            0))
+
+    (defconstant AMOUNT_MASK (q . 0x00000000000000000000000000000000000000000000000000000000000000ff))
+
+    (if (= (sha256tree assert_popchia) popchia_genesis)
+        (if (= (sha256tree curry assert_popchia popchia_genesis) popchia_puzhash)
+            (if (or (= (logand coin_id AMOUNT_MASK) consumer_amount)
+                    (> (logand coin_id AMOUNT_MASK) consumer_amount)
+                )
+                (
+                    assert_popchia
+                        RESERVED_PASSWORD
+                        popchia_genesis
+                        popchia_puzhash
+                        password
+                        consumer_puzhash
+                        popchia_amount
+                        consumer_amount
+                        coin_id
+                )
+                (x)
+            )
+            (x)
+        )
+        (x)
+    )
+)

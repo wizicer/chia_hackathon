@@ -37,11 +37,21 @@ In this example
 4. As C withdraw the last amount, no extra SP4 created, game finished.
 5. A leadboard can be displayed using this series of transactions on-chain `solution`.
 
+After curried, solution like this: `(popchia_genesis popchia_puzhash password consumer_puzhash popchia_amount consumer_amount coin_id)`
+
+- popchia_genesis: genesis id of popchia which would be used to determine if it is a valid popchia
+- popchia_puzhash: next popchia puzzle hash, which should be a valid popchia puzzle
+- password: password to ensure the legality of participants
+- consumer_puzhash: puzzle hash for who want to partipate and withdraw the popchia as a standard coin
+- consumer_amount: amount to withdraw, generated according to coin_id which would be checked
+- popchia_amount: remaining amount would go to next popchia puzzle
+- coin_id: current coin id, act as a oracle to provide randomness
+
 ## How to work
 
 ```
 python3 -m venv venv
 . ./venv/bin/activate
-pip install chia-dev-tool
+pip install chia-dev-tools
 python popchia.py
 ```

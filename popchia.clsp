@@ -25,6 +25,16 @@
         )
     )
 
+    (defmacro or args
+        (if args
+            (qq (if (unquote (f args))
+                    1
+                    (unquote (c or (r args)))))
+            0))
+
+    ; RESERVED_PASSWORD would be curried in before hash, create two coins, one is going to consumer,
+    ; one is continue the popchia game until all amount is distributed.
+
     (defun assert_popchia (
         RESERVED_PASSWORD
         popchia_genesis
@@ -38,42 +48,57 @@
         (if (= (sha256 password) RESERVED_PASSWORD)
             (list 
                 (list CREATE_COIN consumer_puzhash consumer_amount)
-                (list CREATE_COIN popchia_puzhash popchia_amount)
+                (if (> popchia_amount 0)
+                    (list CREATE_COIN popchia_puzhash popchia_amount)
+                    ()
+                )
                 (list ASSERT_MY_COIN_ID coin_id)
             )
             (x)
         )
     )
 
-    (defmacro or args
-        (if args
-            (qq (if (unquote (f args))
-                    1
-                    (unquote (c or (r args)))))
-            0))
+    ; make sure next coin is same type of coin
+
+    (defun correct_popchia_genesis (popchia_genesis popchia_puzhash)
+        (=  (or (= (sha256tree assert_popchia) popchia_genesis)
+                (= (sha256tree curry assert_popchia popchia_genesis) popchia_puzhash)
+            )
+        )
+    )
 
     (defconstant AMOUNT_MASK (q . 0x00000000000000000000000000000000000000000000000000000000000000ff))
 
-    (if (= (sha256tree assert_popchia) popchia_genesis)
-        (if (= (sha256tree curry assert_popchia popchia_genesis) popchia_puzhash)
-            (if (or (= (logand coin_id AMOUNT_MASK) consumer_amount)
-                    (> (logand coin_id AMOUNT_MASK) consumer_amount)
-                )
-                (
-                    assert_popchia
-                        RESERVED_PASSWORD
-                        popchia_genesis
-                        popchia_puzhash
-                        password
-                        consumer_puzhash
-                        popchia_amount
-                        consumer_amount
-                        coin_id
-                )
-                (x)
-            )
-            (x)
-        )
-        (x)
+    (defun get_amount_from_coin_id (coin_id)
+        (logand coin_id AMOUNT_MASK)
     )
+
+    ; judge if correct amount provided which is according to coin_id
+
+    (defun correct_amount (consumer_amount amount)
+        (=  (or (= amount consumer_amount)
+                (> amount consumer_amount)
+            )
+        )
+    )
+
+    ; main entry point
+
+    (assert
+        (
+            (correct_popchia_genesis popchia_genesis popchia_puzhash)
+            (correct_amount consumer_amount (get_amount_from_coin_id coin_id))
+            (assert_popchia
+                RESERVED_PASSWORD
+                popchia_genesis
+                popchia_puzhash
+                password
+                consumer_puzhash
+                popchia_amount
+                consumer_amount
+                coin_id
+            )
+        )
+    )
+
 )

@@ -1,5 +1,11 @@
 # 🍿 Popchia
 
+Hooray🎉 We are awarded first place in the Chia Developer Challenge. [Link](https://www.chia.net/2022/02/23/clovyr-dev-challenge-results.en.html)
+
+Here is the quick demo
+
+![](https://www.chia.net/assets/blog/popchia.gif)
+
 ## Introduction
 
 🍿 Popchia, did you get it?
